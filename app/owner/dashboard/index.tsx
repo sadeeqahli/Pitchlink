@@ -81,19 +81,25 @@ export default function OwnerDashboard() {
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="add-circle" size={24} color="#4CAF50" />
             <Text style={styles.actionText}>Add Manual Booking</Text>
-            <Text style={styles.actionSubtext}>Limited to 2 per day</Text>
+            <Text style={styles.actionSubtext}>Upload booking to prevent duplicates</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
-            <Ionicons name="create" size={24} color="#2196F3" />
-            <Text style={styles.actionText}>List New Pitch</Text>
-            <Text style={styles.actionSubtext}>Add a new football pitch</Text>
+            <Ionicons name="calendar" size={24} color="#2196F3" />
+            <Text style={styles.actionText}>Manage Calendar</Text>
+            <Text style={styles.actionSubtext}>Set availability and pricing</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="analytics" size={24} color="#FF9800" />
             <Text style={styles.actionText}>View Analytics</Text>
-            <Text style={styles.actionSubtext}>Business performance insights</Text>
+            <Text style={styles.actionSubtext}>Track performance and revenue</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.actionButton}>
+            <Ionicons name="card" size={24} color="#9C27B0" />
+            <Text style={styles.actionText}>Payout Settings</Text>
+            <Text style={styles.actionSubtext}>Manage payment preferences</Text>
           </TouchableOpacity>
         </View>
 
@@ -112,11 +118,21 @@ export default function OwnerDashboard() {
 
           <View style={styles.activityItem}>
             <View style={styles.activityIcon}>
-              <Ionicons name="card" size={20} color="#2196F3" />
+              <Ionicons name="cash" size={20} color="#FF9800" />
             </View>
             <View style={styles.activityContent}>
               <Text style={styles.activityTitle}>Payment received</Text>
-              <Text style={styles.activityTime}>₦15,000 - 4 hours ago</Text>
+              <Text style={styles.activityTime}>₦30,000 - 4 hours ago</Text>
+            </View>
+          </View>
+
+          <View style={styles.activityItem}>
+            <View style={styles.activityIcon}>
+              <Ionicons name="star" size={20} color="#FFD700" />
+            </View>
+            <View style={styles.activityContent}>
+              <Text style={styles.activityTitle}>New review received</Text>
+              <Text style={styles.activityTime}>5 stars - Green Field Sports</Text>
             </View>
           </View>
         </View>
@@ -160,7 +176,8 @@ const styles = StyleSheet.create({
     padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    width: '47%',
+    flex: 1,
+    minWidth: '45%',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -189,8 +206,16 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   quickActions: {
-    paddingHorizontal: 20,
-    marginBottom: 20,
+    backgroundColor: '#fff',
+    margin: 20,
+    marginTop: 0,
+    borderRadius: 12,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   sectionTitle: {
     fontSize: 18,
@@ -199,50 +224,52 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   actionButton: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    padding: 15,
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
   actionText: {
-    flex: 1,
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#333',
-    marginLeft: 12,
+    marginLeft: 15,
+    flex: 1,
   },
   actionSubtext: {
     fontSize: 12,
     color: '#666',
-    position: 'absolute',
-    left: 48,
-    bottom: 8,
+    marginLeft: 15,
+    flex: 1,
+    marginTop: 2,
   },
   recentActivity: {
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  activityItem: {
     backgroundColor: '#fff',
+    margin: 20,
+    marginTop: 0,
     borderRadius: 12,
-    padding: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
+    padding: 20,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
   },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
   activityIcon: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
     marginRight: 12,
   },
   activityContent: {
@@ -250,7 +277,7 @@ const styles = StyleSheet.create({
   },
   activityTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '500',
     color: '#333',
   },
   activityTime: {
