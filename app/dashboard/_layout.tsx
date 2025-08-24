@@ -1,9 +1,4 @@
 
-import { Tabs } from 'expo-router';
-import React from 'react';
-import { Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
 export default function DashboardLayout() {
   return (
     <Tabs
@@ -20,8 +15,22 @@ export default function DashboardLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Pitches',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="football" color={color} />,
+          title: 'Find Pitches',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="search" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="book"
+        options={{
+          title: 'Book',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="calendar" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          title: 'Community',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="people" color={color} />,
         }}
       />
       <Tabs.Screen

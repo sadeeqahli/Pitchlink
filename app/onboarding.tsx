@@ -28,7 +28,7 @@ export default function OnboardingPage() {
         {/* Logo Section */}
         <View style={styles.logoSection}>
           <Image
-            source={{ uri: '/attached_assets/c6449272-a12c-4c27-99ad-69983a7a3ac1_1756074849437.jpeg' }}
+            source={require('../attached_assets/c6449272-a12c-4c27-99ad-69983a7a3ac1_1756074849437.jpeg')}
             style={styles.logo}
             resizeMode="contain"
           />

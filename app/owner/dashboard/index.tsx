@@ -89,20 +89,29 @@ export default function OwnerDashboard() {
 
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="calendar" size={24} color="#2196F3" />
-            <Text style={styles.actionText}>Manage Calendar</Text>
-            <Text style={styles.actionSubtext}>Set availability and pricing</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionText}>Manage Calendar</Text>
+              <Text style={styles.actionSubtext}>Set availability and pricing</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="analytics" size={24} color="#FF9800" />
-            <Text style={styles.actionText}>View Analytics</Text>
-            <Text style={styles.actionSubtext}>Track performance and revenue</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionText}>View Analytics</Text>
+              <Text style={styles.actionSubtext}>Track performance and revenue</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="card" size={24} color="#9C27B0" />
-            <Text style={styles.actionText}>Payout Settings</Text>
-            <Text style={styles.actionSubtext}>Manage payment preferences</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionText}>Payout Settings</Text>
+              <Text style={styles.actionSubtext}>Manage payment preferences</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
         </View>
 
@@ -233,18 +242,18 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
+  actionContent: {
+    flex: 1,
+    marginLeft: 15,
+  },
   actionText: {
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-    marginLeft: 15,
-    flex: 1,
   },
   actionSubtext: {
     fontSize: 12,
     color: '#666',
-    marginLeft: 15,
-    flex: 1,
     marginTop: 2,
   },
   recentActivity: {

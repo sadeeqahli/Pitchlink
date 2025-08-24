@@ -1,16 +1,15 @@
-
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function PlayerProfile() {
+export default function ProfilePage() {
   const router = useRouter();
-  const [darkMode, setDarkMode] = useState(false);
-  const [notifications, setNotifications] = useState(true);
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
+  const [notifications, setNotifications] = useState(true);
+  const [locationSharing, setLocationSharing] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -21,20 +20,48 @@ export default function PlayerProfile() {
       const name = await AsyncStorage.getItem('userName');
       const email = await AsyncStorage.getItem('userEmail');
       setUserName(name || 'User');
-      setUserEmail(email || '');
+      setUserEmail(email || 'user@example.com');
     } catch (error) {
-      console.log('Error loading user data:', error);
+      console.error('Error loading user data:', error);
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await AsyncStorage.multiRemove(['userToken', 'userRole', 'userEmail', 'userName']);
-      router.replace('/');
-    } catch (error) {
-      console.log('Error logging out:', error);
-    }
+  const handleLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { 
+          text: 'Logout', 
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await AsyncStorage.multiRemove(['userToken', 'userRole', 'userName', 'userEmail']);
+              router.replace('/');
+            } catch (error) {
+              console.error('Error during logout:', error);
+            }
+          }
+        }
+      ]
+    );
   };
+
+  const SettingItem = ({ icon, title, subtitle, onPress, showArrow = true, rightComponent }: any) => (
+    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
+      <View style={styles.settingLeft}>
+        <View style={styles.settingIcon}>
+          <Ionicons name={icon} size={20} color="#4CAF50" />
+        </View>
+        <View style={styles.settingText}>
+          <Text style={styles.settingTitle}>{title}</Text>
+          {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
+        </View>
+      </View>
+      {rightComponent || (showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />)}
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -43,74 +70,105 @@ export default function PlayerProfile() {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
+        {/* Profile Info */}
         <View style={styles.profileSection}>
           <View style={styles.avatarContainer}>
-            <Ionicons name="person-circle" size={80} color="#4CAF50" />
+            <View style={styles.avatar}>
+              <Text style={styles.avatarText}>{userName[0]?.toUpperCase()}</Text>
+            </View>
+            <TouchableOpacity style={styles.editAvatar}>
+              <Ionicons name="camera" size={16} color="#fff" />
+            </TouchableOpacity>
           </View>
           <Text style={styles.userName}>{userName}</Text>
           <Text style={styles.userEmail}>{userEmail}</Text>
+          <TouchableOpacity style={styles.editProfileButton}>
+            <Text style={styles.editProfileText}>Edit Profile</Text>
+          </TouchableOpacity>
         </View>
 
+        {/* Settings */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="create" size={24} color="#666" />
-            <Text style={styles.menuText}>Edit Profile</Text>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Account Settings</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="lock-closed" size={24} color="#666" />
-            <Text style={styles.menuText}>Change Password</Text>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          <SettingItem
+            icon="person-outline"
+            title="Personal Information"
+            subtitle="Update your details"
+            onPress={() => {}}
+          />
 
-          <View style={styles.menuItem}>
-            <Ionicons name="moon" size={24} color="#666" />
-            <Text style={styles.menuText}>Dark Mode</Text>
-            <Switch 
-              value={darkMode} 
-              onValueChange={setDarkMode}
-              trackColor={{ false: '#767577', true: '#4CAF50' }}
-            />
-          </View>
+          <SettingItem
+            icon="card-outline"
+            title="Payment Methods"
+            subtitle="Manage cards and payments"
+            onPress={() => {}}
+          />
 
-          <View style={styles.menuItem}>
-            <Ionicons name="notifications" size={24} color="#666" />
-            <Text style={styles.menuText}>Notifications</Text>
-            <Switch 
-              value={notifications} 
-              onValueChange={setNotifications}
-              trackColor={{ false: '#767577', true: '#4CAF50' }}
-            />
-          </View>
+          <SettingItem
+            icon="notifications-outline"
+            title="Push Notifications"
+            subtitle="Booking updates and reminders"
+            showArrow={false}
+            rightComponent={
+              <Switch
+                value={notifications}
+                onValueChange={setNotifications}
+                trackColor={{ false: '#ccc', true: '#4CAF50' }}
+              />
+            }
+          />
+
+          <SettingItem
+            icon="location-outline"
+            title="Location Sharing"
+            subtitle="Help find nearby pitches"
+            showArrow={false}
+            rightComponent={
+              <Switch
+                value={locationSharing}
+                onValueChange={setLocationSharing}
+                trackColor={{ false: '#ccc', true: '#4CAF50' }}
+              />
+            }
+          />
         </View>
 
+        {/* Support */}
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="people" size={24} color="#666" />
-            <Text style={styles.menuText}>My Teams</Text>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          <Text style={styles.sectionTitle}>Support</Text>
 
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="card" size={24} color="#666" />
-            <Text style={styles.menuText}>Payment Methods</Text>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          <SettingItem
+            icon="help-circle-outline"
+            title="Help Center"
+            subtitle="FAQs and support articles"
+            onPress={() => {}}
+          />
 
-          <TouchableOpacity style={styles.menuItem}>
-            <Ionicons name="help-circle" size={24} color="#666" />
-            <Text style={styles.menuText}>Help & Support</Text>
-            <Ionicons name="chevron-forward" size={20} color="#ccc" />
-          </TouchableOpacity>
+          <SettingItem
+            icon="chatbubble-outline"
+            title="Contact Support"
+            subtitle="Get help from our team"
+            onPress={() => {}}
+          />
+
+          <SettingItem
+            icon="document-text-outline"
+            title="Terms & Privacy"
+            subtitle="Legal information"
+            onPress={() => {}}
+          />
         </View>
 
+        {/* Logout */}
         <View style={styles.section}>
           <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out" size={24} color="#F44336" />
+            <Ionicons name="log-out-outline" size={20} color="#FF5252" />
             <Text style={styles.logoutText}>Logout</Text>
           </TouchableOpacity>
         </View>
+
+        <View style={styles.bottomSpacing} />
       </ScrollView>
     </View>
   );
@@ -141,45 +199,123 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   avatarContainer: {
+    position: 'relative',
     marginBottom: 15,
   },
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: '#4CAF50',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatarText: {
+    color: '#fff',
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  editAvatar: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#333',
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+  },
   userName: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
   },
   userEmail: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
+    marginBottom: 20,
+  },
+  editProfileButton: {
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+  },
+  editProfileText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
   section: {
     backgroundColor: '#fff',
     marginBottom: 20,
+    paddingVertical: 10,
   },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
     paddingHorizontal: 20,
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
-  menuText: {
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  settingLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1,
+  },
+  settingIcon: {
+    width: 35,
+    height: 35,
+    borderRadius: 18,
+    backgroundColor: '#f5f5f5',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  settingText: {
+    flex: 1,
+  },
+  settingTitle: {
     fontSize: 16,
+    fontWeight: '500',
     color: '#333',
-    marginLeft: 15,
+  },
+  settingSubtitle: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
+    justifyContent: 'center',
     paddingVertical: 15,
+    marginHorizontal: 20,
+    borderRadius: 8,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#FF5252',
   },
   logoutText: {
-    fontSize: 16,
-    color: '#F44336',
-    marginLeft: 15,
+    color: '#FF5252',
+    fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  bottomSpacing: {
+    height: 100,
   },
 });

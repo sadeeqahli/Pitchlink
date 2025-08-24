@@ -1,5 +1,4 @@
-
-import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TextInput, TouchableOpacity, FlatList, Alert } from 'react-native';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
@@ -57,6 +56,19 @@ export default function DashboardPage() {
     pitch.location.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const handleBookPress = (pitchId: string) => {
+    Alert.alert('Booking Confirmed', `You have successfully booked pitch ${pitchId}!`);
+    // In a real app, you would navigate to a confirmation screen or update state
+    // router.push(`/dashboard/book/${pitchId}`); // This would navigate to a booking detail page
+  };
+
+  const handleFindTeamPress = () => {
+    Alert.alert('Find Team', 'This feature is coming soon!');
+    // In a real app, you would navigate to a team finding screen
+    // router.push('/dashboard/find-team');
+  };
+
+
   const renderPitch = ({ item }: { item: Pitch }) => (
     <TouchableOpacity
       style={styles.pitchCard}
@@ -73,7 +85,7 @@ export default function DashboardPage() {
           <Text style={styles.ratingText}>{item.rating}</Text>
         </View>
       </View>
-      
+
       <View style={styles.amenitiesContainer}>
         {item.amenities.map((amenity, index) => (
           <View key={index} style={styles.amenityTag}>
@@ -81,15 +93,15 @@ export default function DashboardPage() {
           </View>
         ))}
       </View>
-      
+
       <View style={styles.pitchFooter}>
         <Text style={styles.priceText}>₦{item.price.toLocaleString()}/hour</Text>
         <View style={styles.bookActions}>
-          <TouchableOpacity style={styles.teamButton}>
+          <TouchableOpacity style={styles.teamButton} onPress={handleFindTeamPress}>
             <Ionicons name="people" size={16} color="#4CAF50" />
             <Text style={styles.teamButtonText}>Find Team</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.bookButton}>
+          <TouchableOpacity style={styles.bookButton} onPress={() => handleBookPress(item.id)}>
             <Text style={styles.bookButtonText}>Book Now</Text>
           </TouchableOpacity>
         </View>
@@ -115,25 +127,25 @@ export default function DashboardPage() {
       <View style={styles.communitySection}>
         <View style={styles.communitySectionHeader}>
           <Text style={styles.communityTitle}>Community</Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push('/dashboard/community')}>
             <Text style={styles.viewAllText}>View All</Text>
           </TouchableOpacity>
         </View>
-        
+
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.communityScroll}>
-          <TouchableOpacity style={styles.communityCard}>
+          <TouchableOpacity style={styles.communityCard} onPress={() => router.push('/dashboard/find-players')}>
             <Ionicons name="people" size={24} color="#4CAF50" />
             <Text style={styles.communityCardTitle}>Find Players</Text>
             <Text style={styles.communityCardText}>Join a team</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.communityCard}>
+
+          <TouchableOpacity style={styles.communityCard} onPress={() => router.push('/dashboard/create-team')}>
             <Ionicons name="add-circle" size={24} color="#2196F3" />
             <Text style={styles.communityCardTitle}>Create Team</Text>
             <Text style={styles.communityCardText}>Build your squad</Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity style={styles.communityCard}>
+
+          <TouchableOpacity style={styles.communityCard} onPress={() => router.push('/dashboard/split-payment')}>
             <Ionicons name="card" size={24} color="#FF9800" />
             <Text style={styles.communityCardTitle}>Split Payment</Text>
             <Text style={styles.communityCardText}>Share costs</Text>
