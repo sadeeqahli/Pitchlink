@@ -80,8 +80,11 @@ export default function OwnerDashboard() {
           
           <TouchableOpacity style={styles.actionButton}>
             <Ionicons name="add-circle" size={24} color="#4CAF50" />
-            <Text style={styles.actionText}>Add Manual Booking</Text>
-            <Text style={styles.actionSubtext}>Upload booking to prevent duplicates</Text>
+            <View style={styles.actionContent}>
+              <Text style={styles.actionText}>Add Manual Booking</Text>
+              <Text style={styles.actionSubtext}>Upload unlimited bookings to prevent duplicates</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={20} color="#ccc" />
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
