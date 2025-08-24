@@ -1,60 +1,76 @@
 
-import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
 export default function AboutPage() {
   const router = useRouter();
 
   return (
     <ScrollView style={styles.container}>
-      <LinearGradient colors={['#4CAF50', '#2E7D32']} style={styles.header}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={styles.backButtonText}>← Back</Text>
-        </TouchableOpacity>
+      <View style={styles.header}>
         <Text style={styles.title}>About PitchLink</Text>
-      </LinearGradient>
+        <Text style={styles.subtitle}>
+          Connecting Football Enthusiasts Across Nigeria
+        </Text>
+      </View>
 
       <View style={styles.content}>
-        <Text style={styles.sectionTitle}>Our Mission</Text>
-        <Text style={styles.text}>
-          PitchLink is designed to bridge the gap between football players and pitch owners across Nigeria. 
-          We provide a seamless, centralized marketplace for finding, booking, and managing football pitches.
-        </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Our Mission</Text>
+          <Text style={styles.sectionText}>
+            PitchLink is dedicated to making football more accessible by connecting 
+            players with quality pitches across Nigeria. We believe every football 
+            enthusiast deserves easy access to great playing facilities.
+          </Text>
+        </View>
 
-        <Text style={styles.sectionTitle}>For Players</Text>
-        <Text style={styles.text}>
-          • Find quality pitches by location{'\n'}
-          • View detailed amenities and facilities{'\n'}
-          • Check real-time availability{'\n'}
-          • Book securely online{'\n'}
-          • Track your booking history
-        </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>For Players</Text>
+          <Text style={styles.sectionText}>
+            • Search and discover pitches by location{'\n'}
+            • View detailed pitch information and amenities{'\n'}
+            • Check real-time availability{'\n'}
+            • Secure online booking and payment{'\n'}
+            • Digital receipts and booking history
+          </Text>
+        </View>
 
-        <Text style={styles.sectionTitle}>For Pitch Owners</Text>
-        <Text style={styles.text}>
-          • List and manage your pitches{'\n'}
-          • Handle booking calendars efficiently{'\n'}
-          • Track revenue and analytics{'\n'}
-          • Manage payouts seamlessly{'\n'}
-          • Gain business insights
-        </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>For Pitch Owners</Text>
+          <Text style={styles.sectionText}>
+            • List and manage your pitches{'\n'}
+            • Calendar-based booking management{'\n'}
+            • Revenue tracking and analytics{'\n'}
+            • Automated payout system{'\n'}
+            • Business insights and reporting
+          </Text>
+        </View>
 
-        <Text style={styles.sectionTitle}>Why Choose PitchLink?</Text>
-        <Text style={styles.text}>
-          We understand the passion for football in Nigeria and the challenges of finding and managing quality pitches. 
-          PitchLink brings technology to grassroots football, making it easier for everyone to play the beautiful game.
-        </Text>
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Why Choose PitchLink?</Text>
+          <Text style={styles.sectionText}>
+            • Trusted and secure platform{'\n'}
+            • Real-time booking system{'\n'}
+            • Comprehensive business tools{'\n'}
+            • Nationwide coverage{'\n'}
+            • 24/7 customer support
+          </Text>
+        </View>
+      </View>
 
+      <View style={styles.buttonContainer}>
         <TouchableOpacity 
-          style={styles.getStartedButton}
+          style={styles.button}
           onPress={() => router.push('/auth/signup')}
         >
-          <Text style={styles.getStartedText}>Get Started Today</Text>
+          <Text style={styles.buttonText}>Get Started</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.linkButton}
+          onPress={() => router.back()}
+        >
+          <Text style={styles.linkText}>Back to Home</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -64,55 +80,66 @@ export default function AboutPage() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
   },
   header: {
+    backgroundColor: '#4CAF50',
     paddingTop: 60,
     paddingBottom: 30,
     paddingHorizontal: 20,
-  },
-  backButton: {
-    marginBottom: 20,
-  },
-  backButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: '500',
+    alignItems: 'center',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#fff',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#fff',
+    opacity: 0.9,
     textAlign: 'center',
   },
   content: {
     padding: 20,
   },
+  section: {
+    marginBottom: 25,
+  },
   sectionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#2E7D32',
-    marginTop: 25,
     marginBottom: 10,
   },
-  text: {
+  sectionText: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#333',
-    marginBottom: 15,
+    color: '#666',
   },
-  getStartedButton: {
+  buttonContainer: {
+    padding: 20,
+    alignItems: 'center',
+  },
+  button: {
     backgroundColor: '#4CAF50',
     paddingVertical: 15,
-    paddingHorizontal: 30,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginTop: 30,
-    marginBottom: 20,
+    paddingHorizontal: 40,
+    borderRadius: 8,
+    marginBottom: 15,
   },
-  getStartedText: {
-    color: 'white',
+  buttonText: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
+  },
+  linkButton: {
+    paddingVertical: 10,
+  },
+  linkText: {
+    color: '#4CAF50',
+    fontSize: 16,
+    textDecorationLine: 'underline',
   },
 });

@@ -1,18 +1,18 @@
 
-import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
 
-export default function SignupScreen() {
+export default function SignupPage() {
+  const router = useRouter();
   const [userType, setUserType] = useState<'player' | 'owner'>('player');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
@@ -23,161 +23,174 @@ export default function SignupScreen() {
       return;
     }
 
-    // Demo signup logic - replace with actual registration
-    Alert.alert('Success', 'Account created successfully!', [
-      { text: 'OK', onPress: () => router.push('/auth/login') }
-    ]);
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      Alert.alert(
+        'Success', 
+        'Account created successfully! Please login.',
+        [{ text: 'OK', onPress: () => router.push('/auth/login') }]
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Signup failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <LinearGradient colors={['#4CAF50', '#2E7D32']} style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={styles.header}>
         <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Join PitchLink today</Text>
-
-        <View style={styles.userTypeContainer}>
-          <TouchableOpacity 
-            style={[styles.userTypeButton, userType === 'player' && styles.activeUserType]}
-            onPress={() => setUserType('player')}
-          >
-            <Text style={[styles.userTypeText, userType === 'player' && styles.activeUserTypeText]}>
-              Player
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity 
-            style={[styles.userTypeButton, userType === 'owner' && styles.activeUserType]}
-            onPress={() => setUserType('owner')}
-          >
-            <Text style={[styles.userTypeText, userType === 'owner' && styles.activeUserTypeText]}>
-              Pitch Owner
-            </Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder={userType === 'owner' ? 'Business Name' : 'Full Name'}
-            placeholderTextColor="#666"
-            value={name}
-            onChangeText={setName}
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#666"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Confirm Password"
-            placeholderTextColor="#666"
-            value={confirmPassword}
-            onChangeText={setConfirmPassword}
-            secureTextEntry
-          />
-
-          <TouchableOpacity 
-            style={styles.signupButton}
-            onPress={handleSignup}
-          >
-            <Text style={styles.signupButtonText}>Create Account</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Already have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/auth/login')}>
-            <Text style={styles.loginLink}>Login</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.subtitle}>Join PitchLink community</Text>
       </View>
-    </LinearGradient>
+
+      <View style={styles.userTypeContainer}>
+        <TouchableOpacity
+          style={[styles.userTypeButton, userType === 'player' && styles.activeUserType]}
+          onPress={() => setUserType('player')}
+        >
+          <Text style={[styles.userTypeText, userType === 'player' && styles.activeUserTypeText]}>
+            Player
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.userTypeButton, userType === 'owner' && styles.activeUserType]}
+          onPress={() => setUserType('owner')}
+        >
+          <Text style={[styles.userTypeText, userType === 'owner' && styles.activeUserTypeText]}>
+            Pitch Owner
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder={userType === 'owner' ? "Business Name" : "Full Name"}
+          value={name}
+          onChangeText={setName}
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Confirm Password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={handleSignup}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Creating Account...' : 'Create Account'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Already have an account? </Text>
+        <TouchableOpacity onPress={() => router.push('/auth/login')}>
+          <Text style={styles.linkText}>Sign In</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
+    backgroundColor: '#fff',
+    padding: 20,
     justifyContent: 'center',
-    paddingHorizontal: 30,
-    paddingTop: 20,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 30,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: 10,
+    color: '#2E7D32',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
-    textAlign: 'center',
-    marginBottom: 30,
+    color: '#666',
   },
   userTypeContainer: {
     flexDirection: 'row',
     marginBottom: 30,
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    borderRadius: 10,
-    padding: 5,
   },
   userTypeButton: {
     flex: 1,
-    paddingVertical: 12,
-    alignItems: 'center',
+    padding: 15,
+    borderWidth: 2,
+    borderColor: '#e0e0e0',
     borderRadius: 8,
+    marginHorizontal: 5,
+    alignItems: 'center',
   },
   activeUserType: {
-    backgroundColor: 'white',
+    borderColor: '#4CAF50',
+    backgroundColor: '#4CAF50',
   },
   userTypeText: {
-    color: 'white',
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#666',
   },
   activeUserTypeText: {
-    color: '#4CAF50',
+    color: '#fff',
+    fontWeight: 'bold',
   },
   form: {
     marginBottom: 30,
   },
   input: {
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderRadius: 10,
-    fontSize: 16,
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    borderRadius: 8,
     marginBottom: 15,
+    fontSize: 16,
   },
-  signupButton: {
-    backgroundColor: '#2E7D32',
-    paddingVertical: 15,
-    borderRadius: 10,
+  button: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 10,
   },
-  signupButtonText: {
-    color: 'white',
+  buttonText: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
+  },
+  linkText: {
+    color: '#4CAF50',
+    fontSize: 16,
   },
   footer: {
     flexDirection: 'row',
@@ -185,11 +198,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    color: 'rgba(255,255,255,0.8)',
-  },
-  loginLink: {
-    color: 'white',
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontSize: 16,
+    color: '#666',
   },
 });

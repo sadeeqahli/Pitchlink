@@ -1,131 +1,151 @@
 
-import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { useState } from 'react';
 import { useRouter } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function LoginScreen() {
+export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    // Demo login logic - replace with actual authentication
-    if (email.includes('admin')) {
-      router.replace('/admin');
-    } else if (email.includes('owner')) {
-      router.replace('/owner/dashboard');
-    } else {
-      router.replace('/(tabs)');
+    setLoading(true);
+    try {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Mock authentication logic
+      let userRole = 'player';
+      if (email.includes('owner')) userRole = 'owner';
+      if (email.includes('admin')) userRole = 'admin';
+
+      await AsyncStorage.setItem('userToken', 'mock-token');
+      await AsyncStorage.setItem('userRole', userRole);
+      await AsyncStorage.setItem('userEmail', email);
+
+      // Navigate based on role
+      switch (userRole) {
+        case 'owner':
+          router.replace('/owner/dashboard');
+          break;
+        case 'admin':
+          router.replace('/admin/dashboard');
+          break;
+        default:
+          router.replace('/dashboard');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Login failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <LinearGradient colors={['#4CAF50', '#2E7D32']} style={styles.container}>
-      <View style={styles.content}>
+    <View style={styles.container}>
+      <View style={styles.header}>
         <Text style={styles.title}>Welcome Back</Text>
-        <Text style={styles.subtitle}>Sign in to continue</Text>
-
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            placeholderTextColor="#666"
-            value={email}
-            onChangeText={setEmail}
-            keyboardType="email-address"
-            autoCapitalize="none"
-          />
-
-          <TextInput
-            style={styles.input}
-            placeholder="Password"
-            placeholderTextColor="#666"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
-
-          <TouchableOpacity 
-            style={styles.loginButton}
-            onPress={handleLogin}
-          >
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity 
-            onPress={() => router.push('/auth/forgot-password')}
-          >
-            <Text style={styles.forgotPassword}>Forgot Password?</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => router.push('/auth/signup')}>
-            <Text style={styles.signupLink}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={styles.subtitle}>Sign in to your PitchLink account</Text>
       </View>
-    </LinearGradient>
+
+      <View style={styles.form}>
+        <TextInput
+          style={styles.input}
+          placeholder="Email Address"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={handleLogin}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>
+            {loading ? 'Signing In...' : 'Sign In'}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => router.push('/auth/forgot-password')}>
+          <Text style={styles.linkText}>Forgot Password?</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.footer}>
+        <Text style={styles.footerText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => router.push('/auth/signup')}>
+          <Text style={styles.linkText}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  content: {
-    flex: 1,
+    backgroundColor: '#fff',
+    padding: 20,
     justifyContent: 'center',
-    paddingHorizontal: 30,
+  },
+  header: {
+    alignItems: 'center',
+    marginBottom: 40,
   },
   title: {
-    fontSize: 32,
+    fontSize: 28,
     fontWeight: 'bold',
-    color: 'white',
-    textAlign: 'center',
-    marginBottom: 10,
+    color: '#2E7D32',
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: 'rgba(255,255,255,0.8)',
-    textAlign: 'center',
-    marginBottom: 40,
+    color: '#666',
   },
   form: {
     marginBottom: 30,
   },
   input: {
-    backgroundColor: 'white',
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderRadius: 10,
-    fontSize: 16,
+    backgroundColor: '#f5f5f5',
+    padding: 15,
+    borderRadius: 8,
     marginBottom: 15,
+    fontSize: 16,
   },
-  loginButton: {
-    backgroundColor: '#2E7D32',
-    paddingVertical: 15,
-    borderRadius: 10,
+  button: {
+    backgroundColor: '#4CAF50',
+    padding: 15,
+    borderRadius: 8,
     alignItems: 'center',
     marginTop: 10,
   },
-  loginButtonText: {
-    color: 'white',
+  buttonText: {
+    color: '#fff',
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
   },
-  forgotPassword: {
-    color: 'white',
+  linkText: {
+    color: '#4CAF50',
     textAlign: 'center',
-    marginTop: 20,
-    textDecorationLine: 'underline',
+    marginTop: 15,
+    fontSize: 16,
   },
   footer: {
     flexDirection: 'row',
@@ -133,11 +153,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   footerText: {
-    color: 'rgba(255,255,255,0.8)',
-  },
-  signupLink: {
-    color: 'white',
-    fontWeight: '600',
-    textDecorationLine: 'underline',
+    fontSize: 16,
+    color: '#666',
   },
 });
