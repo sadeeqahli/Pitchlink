@@ -28,11 +28,20 @@ export default function SignupPage() {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      Alert.alert(
-        'Success', 
-        'Account created successfully! Please login.',
-        [{ text: 'OK', onPress: () => router.push('/auth/login') }]
-      );
+      // Store user data and redirect to appropriate dashboard
+      await AsyncStorage.setItem('userToken', 'mock-token');
+      await AsyncStorage.setItem('userRole', userType);
+      await AsyncStorage.setItem('userEmail', email);
+      await AsyncStorage.setItem('userName', name);
+
+      // Navigate based on role
+      switch (userType) {
+        case 'owner':
+          router.replace('/owner/dashboard');
+          break;
+        default:
+          router.replace('/dashboard');
+      }
     } catch (error) {
       Alert.alert('Error', 'Signup failed. Please try again.');
     } finally {

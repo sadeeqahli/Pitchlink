@@ -84,9 +84,15 @@ export default function DashboardPage() {
       
       <View style={styles.pitchFooter}>
         <Text style={styles.priceText}>₦{item.price.toLocaleString()}/hour</Text>
-        <TouchableOpacity style={styles.bookButton}>
-          <Text style={styles.bookButtonText}>Book Now</Text>
-        </TouchableOpacity>
+        <View style={styles.bookActions}>
+          <TouchableOpacity style={styles.teamButton}>
+            <Ionicons name="people" size={16} color="#4CAF50" />
+            <Text style={styles.teamButtonText}>Find Team</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.bookButton}>
+            <Text style={styles.bookButtonText}>Book Now</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -104,6 +110,35 @@ export default function DashboardPage() {
             onChangeText={setSearchQuery}
           />
         </View>
+      </View>
+
+      <View style={styles.communitySection}>
+        <View style={styles.communitySectionHeader}>
+          <Text style={styles.communityTitle}>Community</Text>
+          <TouchableOpacity>
+            <Text style={styles.viewAllText}>View All</Text>
+          </TouchableOpacity>
+        </View>
+        
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.communityScroll}>
+          <TouchableOpacity style={styles.communityCard}>
+            <Ionicons name="people" size={24} color="#4CAF50" />
+            <Text style={styles.communityCardTitle}>Find Players</Text>
+            <Text style={styles.communityCardText}>Join a team</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.communityCard}>
+            <Ionicons name="add-circle" size={24} color="#2196F3" />
+            <Text style={styles.communityCardTitle}>Create Team</Text>
+            <Text style={styles.communityCardText}>Build your squad</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity style={styles.communityCard}>
+            <Ionicons name="card" size={24} color="#FF9800" />
+            <Text style={styles.communityCardTitle}>Split Payment</Text>
+            <Text style={styles.communityCardText}>Share costs</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
       <FlatList
@@ -214,14 +249,32 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
   },
   pitchFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: 'column',
+    gap: 10,
   },
   priceText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#4CAF50',
+  },
+  bookActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  teamButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#E8F5E8',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+    gap: 4,
+  },
+  teamButtonText: {
+    color: '#4CAF50',
+    fontSize: 12,
+    fontWeight: 'bold',
   },
   bookButton: {
     backgroundColor: '#4CAF50',
@@ -232,5 +285,50 @@ const styles = StyleSheet.create({
   bookButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  communitySection: {
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    marginBottom: 10,
+  },
+  communitySectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 15,
+  },
+  communityTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  viewAllText: {
+    color: '#4CAF50',
+    fontSize: 14,
+  },
+  communityScroll: {
+    paddingLeft: 20,
+  },
+  communityCard: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 12,
+    padding: 15,
+    marginRight: 15,
+    width: 120,
+    alignItems: 'center',
+  },
+  communityCardTitle: {
+    fontSize: 12,
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 8,
+    textAlign: 'center',
+  },
+  communityCardText: {
+    fontSize: 10,
+    color: '#666',
+    marginTop: 2,
+    textAlign: 'center',
   },
 });
