@@ -62,7 +62,13 @@ export default function DashboardLayout() {
         options={{
           href: null, // Hide from tab bar
         }}
-      /></Tabs.Screen>
+      />
+      <Tabs.Screen
+        name="edit-profile"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
     </Tabs>
   );
 }
