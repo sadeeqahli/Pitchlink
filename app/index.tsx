@@ -1,9 +1,9 @@
-
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Ionicons } from '@expo/vector-icons'; // Import Ionicons
 
 export default function HomePage() {
   const router = useRouter();
@@ -82,6 +82,13 @@ export default function HomePage() {
           </TouchableOpacity>
         </View>
 
+        <View style={styles.adminContainer}>
+          <TouchableOpacity style={styles.adminButton} onPress={() => router.push('/admin/login')}>
+            <Ionicons name="shield-checkmark" size={16} color="#666" />
+            <Text style={styles.adminButtonText}>Admin Access</Text>
+          </TouchableOpacity>
+        </View>
+
         <TouchableOpacity onPress={() => router.push('/about')}>
           <Text style={styles.linkText}>Learn More About PitchLink</Text>
         </TouchableOpacity>
@@ -145,8 +152,9 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   buttonContainer: {
-    marginTop: 30,
-    marginBottom: 20,
+    width: '100%',
+    gap: 15,
+    marginBottom: 30,
   },
   button: {
     paddingVertical: 15,
@@ -176,5 +184,23 @@ const styles = StyleSheet.create({
     color: '#4CAF50',
     textAlign: 'center',
     textDecorationLine: 'underline',
+  },
+  adminContainer: {
+    alignItems: 'center',
+  },
+  adminButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  adminButtonText: {
+    color: '#666',
+    fontSize: 14,
+    marginLeft: 8,
   },
 });

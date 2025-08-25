@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Switch, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Switch } from 'react-native';
 import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -8,8 +8,9 @@ export default function ProfilePage() {
   const router = useRouter();
   const [userName, setUserName] = useState('');
   const [userEmail, setUserEmail] = useState('');
-  const [notifications, setNotifications] = useState(true);
-  const [locationSharing, setLocationSharing] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [locationEnabled, setLocationEnabled] = useState(false);
 
   useEffect(() => {
     loadUserData();
@@ -19,158 +20,188 @@ export default function ProfilePage() {
     try {
       const name = await AsyncStorage.getItem('userName');
       const email = await AsyncStorage.getItem('userEmail');
-      setUserName(name || 'User');
-      setUserEmail(email || 'user@example.com');
+      const darkMode = await AsyncStorage.getItem('darkMode');
+      const location = await AsyncStorage.getItem('locationEnabled');
+
+      if (name) setUserName(name);
+      if (email) setUserEmail(email);
+      if (darkMode) setIsDarkMode(JSON.parse(darkMode));
+      if (location) setLocationEnabled(JSON.parse(location));
     } catch (error) {
       console.error('Error loading user data:', error);
     }
   };
 
-  const handleLogout = () => {
+  const handleDarkModeToggle = async (value: boolean) => {
+    setIsDarkMode(value);
+    await AsyncStorage.setItem('darkMode', JSON.stringify(value));
+    Alert.alert('Theme Changed', `${value ? 'Dark' : 'Light'} mode activated!`);
+  };
+
+  const handleLocationToggle = async (value: boolean) => {
+    setLocationEnabled(value);
+    await AsyncStorage.setItem('locationEnabled', JSON.stringify(value));
+    if (value) {
+      Alert.alert('Location Enabled', 'You can now find pitches near your location!');
+    } else {
+      Alert.alert('Location Disabled', 'Location services turned off.');
+    }
+  };
+
+  const handleEditProfile = () => {
+    router.push('/dashboard/edit-profile');
+  };
+
+  const handleLogout = async () => {
     Alert.alert(
       'Logout',
       'Are you sure you want to logout?',
       [
         { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Logout', 
+        {
+          text: 'Logout',
           style: 'destructive',
           onPress: async () => {
-            try {
-              await AsyncStorage.multiRemove(['userToken', 'userRole', 'userName', 'userEmail']);
-              router.replace('/');
-            } catch (error) {
-              console.error('Error during logout:', error);
-            }
-          }
-        }
+            await AsyncStorage.clear();
+            router.replace('/');
+          },
+        },
       ]
     );
   };
 
-  const SettingItem = ({ icon, title, subtitle, onPress, showArrow = true, rightComponent }: any) => (
-    <TouchableOpacity style={styles.settingItem} onPress={onPress}>
+  const ProfileOption = ({ icon, title, subtitle, onPress, rightElement }: {
+    icon: string;
+    title: string;
+    subtitle?: string;
+    onPress?: () => void;
+    rightElement?: React.ReactNode;
+  }) => (
+    <TouchableOpacity style={styles.settingItem} onPress={onPress} disabled={!onPress && !rightElement}>
       <View style={styles.settingLeft}>
         <View style={styles.settingIcon}>
-          <Ionicons name={icon} size={20} color="#4CAF50" />
+          <Ionicons name={icon as any} size={20} color="#4CAF50" />
         </View>
         <View style={styles.settingText}>
           <Text style={styles.settingTitle}>{title}</Text>
           {subtitle && <Text style={styles.settingSubtitle}>{subtitle}</Text>}
         </View>
       </View>
-      {rightComponent || (showArrow && <Ionicons name="chevron-forward" size={20} color="#ccc" />)}
+      {rightElement || <Ionicons name="chevron-forward" size={20} color="#ccc" />}
     </TouchableOpacity>
   );
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Profile</Text>
+        <TouchableOpacity style={styles.darkModeToggle} onPress={() => handleDarkModeToggle(!isDarkMode)}>
+          <Ionicons name={isDarkMode ? "sunny" : "moon"} size={24} color="#4CAF50" />
+        </TouchableOpacity>
+
+        <View style={styles.avatarContainer}>
+          <Ionicons name="person" size={60} color="#4CAF50" />
+          <TouchableOpacity style={styles.editAvatarButton} onPress={handleEditProfile}>
+            <Ionicons name="camera" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.userName}>{userName}</Text>
+        <Text style={styles.userEmail}>{userEmail}</Text>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Profile Info */}
-        <View style={styles.profileSection}>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{userName[0]?.toUpperCase()}</Text>
-            </View>
-            <TouchableOpacity style={styles.editAvatar}>
-              <Ionicons name="camera" size={16} color="#fff" />
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.userName}>{userName}</Text>
-          <Text style={styles.userEmail}>{userEmail}</Text>
-          <TouchableOpacity style={styles.editProfileButton}>
-            <Text style={styles.editProfileText}>Edit Profile</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Account</Text>
+        <ProfileOption
+          icon="person-circle"
+          title="Edit Profile"
+          subtitle="Update picture, bio and personal info"
+          onPress={handleEditProfile}
+        />
+        <ProfileOption
+          icon="card"
+          title="Payment Methods"
+          subtitle="Manage your payment options"
+          onPress={() => Alert.alert('Coming Soon', 'Payment methods will be available soon!')}
+        />
+        <ProfileOption
+          icon="shield-checkmark"
+          title="Privacy & Security"
+          subtitle="Manage your account security"
+          onPress={() => Alert.alert('Coming Soon', 'Privacy settings will be available soon!')}
+        />
+      </View>
 
-        {/* Settings */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Settings</Text>
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Settings</Text>
+        <ProfileOption
+          icon="notifications"
+          title="Push Notifications"
+          subtitle="Get notified about bookings"
+          rightElement={
+            <Switch
+              value={notificationsEnabled}
+              onValueChange={setNotificationsEnabled}
+              trackColor={{ false: '#767577', true: '#4CAF50' }}
+              thumbColor={notificationsEnabled ? '#fff' : '#f4f3f4'}
+            />
+          }
+        />
+        <ProfileOption
+          icon="location"
+          title="Location Services"
+          subtitle={locationEnabled ? "Finding pitches near you" : "Enable to find nearby pitches"}
+          rightElement={
+            <Switch
+              value={locationEnabled}
+              onValueChange={handleLocationToggle}
+              trackColor={{ false: '#767577', true: '#4CAF50' }}
+              thumbColor={locationEnabled ? '#fff' : '#f4f3f4'}
+            />
+          }
+        />
+        <ProfileOption
+          icon="moon"
+          title="Dark Mode"
+          subtitle={isDarkMode ? "Dark theme active" : "Light theme active"}
+          rightElement={
+            <Switch
+              value={isDarkMode}
+              onValueChange={handleDarkModeToggle}
+              trackColor={{ false: '#767577', true: '#4CAF50' }}
+              thumbColor={isDarkMode ? '#fff' : '#f4f3f4'}
+            />
+          }
+        />
+      </View>
 
-          <SettingItem
-            icon="person-outline"
-            title="Personal Information"
-            subtitle="Update your details"
-            onPress={() => {}}
-          />
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>Support</Text>
+        <ProfileOption
+          icon="help-circle"
+          title="Help & FAQ"
+          subtitle="Get help and find answers"
+          onPress={() => Alert.alert('Help', 'Help section will be available soon!')}
+        />
+        <ProfileOption
+          icon="mail"
+          title="Contact Support"
+          subtitle="Get in touch with our team"
+          onPress={() => Alert.alert('Support', 'Contact support will be available soon!')}
+        />
+        <ProfileOption
+          icon="star"
+          title="Rate Pitchlink"
+          subtitle="Share your experience"
+          onPress={() => Alert.alert('Rating', 'Rating feature will be available soon!')}
+        />
+      </View>
 
-          <SettingItem
-            icon="card-outline"
-            title="Payment Methods"
-            subtitle="Manage cards and payments"
-            onPress={() => {}}
-          />
+      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <Ionicons name="log-out" size={20} color="#FF5252" />
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
 
-          <SettingItem
-            icon="notifications-outline"
-            title="Push Notifications"
-            subtitle="Booking updates and reminders"
-            showArrow={false}
-            rightComponent={
-              <Switch
-                value={notifications}
-                onValueChange={setNotifications}
-                trackColor={{ false: '#ccc', true: '#4CAF50' }}
-              />
-            }
-          />
-
-          <SettingItem
-            icon="location-outline"
-            title="Location Sharing"
-            subtitle="Help find nearby pitches"
-            showArrow={false}
-            rightComponent={
-              <Switch
-                value={locationSharing}
-                onValueChange={setLocationSharing}
-                trackColor={{ false: '#ccc', true: '#4CAF50' }}
-              />
-            }
-          />
-        </View>
-
-        {/* Support */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Support</Text>
-
-          <SettingItem
-            icon="help-circle-outline"
-            title="Help Center"
-            subtitle="FAQs and support articles"
-            onPress={() => {}}
-          />
-
-          <SettingItem
-            icon="chatbubble-outline"
-            title="Contact Support"
-            subtitle="Get help from our team"
-            onPress={() => {}}
-          />
-
-          <SettingItem
-            icon="document-text-outline"
-            title="Terms & Privacy"
-            subtitle="Legal information"
-            onPress={() => {}}
-          />
-        </View>
-
-        {/* Logout */}
-        <View style={styles.section}>
-          <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={20} color="#FF5252" />
-            <Text style={styles.logoutText}>Logout</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.bottomSpacing} />
-      </ScrollView>
-    </View>
+      <View style={styles.bottomSpacing} />
+    </ScrollView>
   );
 }
 
@@ -181,52 +212,47 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#fff',
-    paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#2E7D32',
-  },
-  profileSection: {
-    backgroundColor: '#fff',
     alignItems: 'center',
-    paddingVertical: 30,
-    marginBottom: 20,
+    paddingTop: 60,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+    position: 'relative',
+  },
+  darkModeToggle: {
+    position: 'absolute',
+    top: 60,
+    right: 20,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
   },
   avatarContainer: {
     position: 'relative',
     marginBottom: 15,
-  },
-  avatar: {
+    alignItems: 'center',
+    justifyContent: 'center',
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#4CAF50',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#e0e0e0',
   },
-  avatarText: {
-    color: '#fff',
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  editAvatar: {
+  editAvatarButton: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
-    backgroundColor: '#333',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
+    bottom: -10,
+    right: -10,
+    backgroundColor: '#4CAF50',
+    width: 35,
+    height: 35,
+    borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
     borderColor: '#fff',
+    zIndex: 1,
   },
   userName: {
     fontSize: 22,
@@ -239,27 +265,24 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 20,
   },
-  editProfileButton: {
-    backgroundColor: '#4CAF50',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
-  },
-  editProfileText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
   section: {
     backgroundColor: '#fff',
     marginBottom: 20,
     paddingVertical: 10,
+    borderRadius: 8,
+    marginHorizontal: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     paddingHorizontal: 20,
-    paddingVertical: 15,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
   },
@@ -304,14 +327,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 15,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     borderRadius: 8,
-    backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#FF5252',
+    backgroundColor: '#FF5252',
+    marginTop: 20,
   },
   logoutText: {
-    color: '#FF5252',
+    color: '#fff',
     fontWeight: 'bold',
     marginLeft: 10,
   },

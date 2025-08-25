@@ -25,24 +25,17 @@ export default function DashboardLayout() {
         }}
       />
       <Tabs.Screen
-        name="book"
-        options={{
-          title: 'Book',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="calendar" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="community"
-        options={{
-          title: 'Community',
-          tabBarIcon: ({ color }) => <Ionicons size={28} name="people" color={color} />,
-        }}
-      />
-      <Tabs.Screen
         name="history"
         options={{
           title: 'History',
           tabBarIcon: ({ color }) => <Ionicons size={28} name="time" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="wallet"
+        options={{
+          title: 'Wallet',
+          tabBarIcon: ({ color }) => <Ionicons size={28} name="wallet" color={color} />,
         }}
       />
       <Tabs.Screen
@@ -52,6 +45,24 @@ export default function DashboardLayout() {
           tabBarIcon: ({ color }) => <Ionicons size={28} name="person" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="book"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="community"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      />
+      <Tabs.Screen
+        name="payments"
+        options={{
+          href: null, // Hide from tab bar
+        }}
+      /></Tabs.Screen>
     </Tabs>
   );
 }
